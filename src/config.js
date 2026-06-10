@@ -40,3 +40,32 @@ export const DELETE_REVIEW_FOLDER = "Delete Review";
 
 // Safety cap: stop paging after this many matched messages in one run.
 export const MAX_MESSAGES = 5000;
+
+// --- Sender picker ---------------------------------------------------------
+// The scan walks the Inbox newest-first and stops once it crosses the chosen
+// date window. DEFAULT_SCAN_MONTHS is the option pre-selected in the UI.
+export const DEFAULT_SCAN_MONTHS = 3;
+// Hard cap on how many messages the scan will page through (separate from
+// MAX_MESSAGES, which caps a single-sender sweep).
+export const MAX_SCAN = 6000;
+
+// Local-parts that strongly suggest automated/bulk mail. Matched as either an
+// exact local-part or a substring of it (e.g. "newsletter" in
+// "newsletter-daily"). Kept tight to avoid flagging real people.
+export const BULK_ADDRESS_HINTS = [
+  "noreply", "no-reply", "donotreply", "do-not-reply",
+  "newsletter", "newsletters", "marketing", "mailer",
+  "notifications", "notification", "updates", "deals",
+  "offers", "promotions", "bounce",
+];
+
+// Sending-subdomain prefixes (email.brand.com, mail.brand.com, …).
+export const BULK_SUBDOMAIN_HINTS = [
+  "email.", "mail.", "mailer.", "e.", "em.", "news.", "marketing.",
+];
+
+// Subject keywords — weakest signal, only a minor nudge.
+export const SPAM_SUBJECT_HINTS = [
+  "sale", "% off", "discount", "deal", "offer", "expires",
+  "limited time", "unsubscribe", "act now", "coupon", "promo",
+];

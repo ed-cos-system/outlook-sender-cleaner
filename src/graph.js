@@ -2,6 +2,7 @@ import {
   GRAPH_BASE,
   DELETE_REVIEW_FOLDER,
   MAX_MESSAGES,
+  MAX_SCAN,
 } from "./config.js";
 import { getToken } from "./auth.js";
 
@@ -85,6 +86,41 @@ export async function findMessagesFromSender(sender, scope, onProgress) {
     for (const m of data.value || []) messages.push(m);
     if (onProgress) onProgress(messages.length);
     if (messages.length >= MAX_MESSAGES) break;
+    const next = data["@odata.nextLink"];
+    if (!next) break;
+    data = await graph(next, {}, true);
+  }
+  return messages;
+}
+
+// Scan the Inbox newest-first, collecting lightweight records until we cross
+// `cutoffISO` (anything older is ignored) or hit MAX_SCAN. This is the cheap
+// path for the sender picker: ONE paged listing, only the `from` field is
+// needed — no per-message body/header fetches.
+// receivedDateTime comes back as ISO-8601 UTC ("…Z"), and cutoffISO is built
+// the same way, so a plain string compare is also a chronological compare.
+// onProgress(countSoFar) fires as pages stream in.
+export async function scanRecentMessages(cutoffISO, onProgress) {
+  let path =
+    "/me/mailFolders/inbox/messages" +
+    "?$select=id,from,subject,receivedDateTime" +
+    "&$orderby=receivedDateTime desc" +
+    "&$top=100";
+
+  const messages = [];
+  let data = await graph(path);
+  let crossedCutoff = false;
+
+  while (data) {
+    for (const m of data.value || []) {
+      if (m.receivedDateTime && m.receivedDateTime < cutoffISO) {
+        crossedCutoff = true;
+        break;
+      }
+      messages.push(m);
+    }
+    if (onProgress) onProgress(messages.length);
+    if (crossedCutoff || messages.length >= MAX_SCAN) break;
     const next = data["@odata.nextLink"];
     if (!next) break;
     data = await graph(next, {}, true);

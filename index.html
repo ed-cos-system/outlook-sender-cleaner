@@ -45,6 +45,45 @@
 
       <!-- Signed-in state -->
       <section id="app-card" class="card" hidden>
+        <div class="scope-row">
+          <span class="field-label">Move scope</span>
+          <div class="scope">
+            <label class="radio">
+              <input type="radio" name="scope" value="inbox" checked />
+              <span>Inbox only</span>
+            </label>
+            <label class="radio">
+              <input type="radio" name="scope" value="all" />
+              <span>All folders</span>
+            </label>
+          </div>
+        </div>
+
+        <h2 class="section-title">Scan recent senders</h2>
+        <p class="muted">
+          Looks through your Inbox newest-first and groups what it finds by
+          sender, so you can spot the bulk/newsletter mail without typing any
+          addresses. Likely-spam senders rise to the top.
+        </p>
+
+        <div class="scan-controls">
+          <select id="scan-window" class="input select" aria-label="How far back to scan">
+            <option value="1">Last 1 month</option>
+            <option value="3" selected>Last 3 months</option>
+            <option value="6">Last 6 months</option>
+            <option value="12">Last 12 months</option>
+          </select>
+          <button id="scan" class="primary">Scan</button>
+        </div>
+
+        <p id="scan-summary" class="scan-summary mono"></p>
+        <ul id="sender-list" class="sender-list" hidden></ul>
+        <button id="sweep" class="danger" hidden disabled>
+          Move selected to Delete Review
+        </button>
+
+        <div class="divider"><span>or enter a specific sender</span></div>
+
         <label class="field-label" for="sender">Sender</label>
         <input
           id="sender"
@@ -54,17 +93,6 @@
           autocomplete="off"
           spellcheck="false"
         />
-
-        <div class="scope">
-          <label class="radio">
-            <input type="radio" name="scope" value="inbox" checked />
-            <span>Inbox only</span>
-          </label>
-          <label class="radio">
-            <input type="radio" name="scope" value="all" />
-            <span>All folders</span>
-          </label>
-        </div>
 
         <button id="find" class="primary">Find messages</button>
 
