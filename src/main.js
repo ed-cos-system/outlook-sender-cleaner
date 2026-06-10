@@ -31,6 +31,18 @@ function isEmail(v) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
+// Accept whatever Outlook shows, e.g.
+//   ProjectManagement.com Newsletter <newsletter@email.projectmanagement.com>
+// and pull out just the address. Falls back to the trimmed input when there
+// are no angle brackets (a plain address pasted on its own).
+function extractEmail(raw) {
+  if (!raw) return "";
+  const v = raw.trim();
+  const bracketed = v.match(/<([^>]+)>/);
+  const candidate = bracketed ? bracketed[1] : v;
+  return candidate.trim().replace(/^["']+|["']+$/g, "").toLowerCase();
+}
+
 function showSignedIn(account) {
   els["signin-card"].hidden = true;
   els["app-card"].hidden = false;
@@ -55,20 +67,25 @@ function resetResults() {
 }
 
 async function onFind() {
-  const sender = els.sender.value.trim().toLowerCase();
+  const sender = extractEmail(els.sender.value);
   if (!isEmail(sender)) {
-    setStatus("Enter a valid sender email address.", "error");
+    setStatus(
+      "Couldn't find an email address in that. Paste the sender from Outlook, or just the address.",
+      "error"
+    );
     return;
   }
+  // Show the cleaned address so it's clear what we're searching for.
+  els.sender.value = sender;
   resetResults();
   els.find.disabled = true;
-  setStatus(`Searching for mail from ${sender}\u2026`);
+  setStatus(`Searching for mail from ${sender}…`);
 
   try {
     const scope =
       document.querySelector('input[name="scope"]:checked').value;
     matched = await findMessagesFromSender(sender, scope, (n) =>
-      setStatus(`Found ${n} so far\u2026`)
+      setStatus(`Found ${n} so far…`)
     );
 
     els.count.textContent = String(matched.length);
@@ -120,12 +137,12 @@ async function onMove() {
   els.move.disabled = true;
   els.find.disabled = true;
   els["progress-wrap"].hidden = false;
-  setStatus("Preparing Delete Review folder\u2026");
+  setStatus("Preparing Delete Review folder…");
 
   try {
     const folderId = await ensureDeleteReviewFolder();
     const ids = matched.map((m) => m.id);
-    setStatus(`Moving ${ids.length} messages\u2026`);
+    setStatus(`Moving ${ids.length} messages…`);
 
     const { moved, failed } = await moveMessages(ids, folderId, (done, total) => {
       const pct = Math.round((done / total) * 100);
@@ -140,7 +157,7 @@ async function onMove() {
       );
     } else {
       setStatus(
-        `Moved ${moved}. ${failed.length} could not be moved \u2014 try Find again to retry.`,
+        `Moved ${moved}. ${failed.length} could not be moved — try Find again to retry.`,
         "error"
       );
     }
