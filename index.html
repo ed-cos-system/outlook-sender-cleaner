@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sender Sweep</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div class="frame">
+      <header class="top">
+        <div class="brand">
+          <span class="dot"></span>
+          <h1>Sender&nbsp;Sweep</h1>
+        </div>
+        <div id="account" class="account" hidden>
+          <span id="account-name" class="mono"></span>
+          <button id="signout" class="ghost">Sign out</button>
+        </div>
+      </header>
+
+      <p class="lede">
+        Pull every message from one sender out of your inbox and into a
+        holding folder called <strong>Delete Review</strong>, so you can
+        glance through it before anything is actually deleted. Nothing is
+        ever permanently removed here.
+      </p>
+
+      <!-- Signed-out state -->
+      <section id="signin-card" class="card" hidden>
+        <h2>Connect your mailbox</h2>
+        <p class="muted">
+          Sign in with the personal Microsoft account that receives the mail
+          (f14stalker@msn.com or stalkersignup@outlook.com). You'll be asked
+          to allow read/write access to your mail.
+        </p>
+        <button id="signin" class="primary">Sign in with Microsoft</button>
+      </section>
+
+      <!-- Signed-in state -->
+      <section id="app-card" class="card" hidden>
+        <label class="field-label" for="sender">Sender address</label>
+        <input
+          id="sender"
+          class="mono input"
+          type="email"
+          placeholder="noreply@example.com"
+          autocomplete="off"
+          spellcheck="false"
+        />
+
+        <div class="scope">
+          <label class="radio">
+            <input type="radio" name="scope" value="inbox" checked />
+            <span>Inbox only</span>
+          </label>
+          <label class="radio">
+            <input type="radio" name="scope" value="all" />
+            <span>All folders</span>
+          </label>
+        </div>
+
+        <button id="find" class="primary">Find messages</button>
+
+        <!-- Results / confirm -->
+        <div id="results" class="results" hidden>
+          <div class="count-row">
+            <span id="count" class="count">0</span>
+            <span class="count-label">messages from</span>
+            <span id="count-sender" class="mono"></span>
+          </div>
+          <ul id="preview" class="preview"></ul>
+          <button id="move" class="danger" disabled>
+            Move to Delete Review
+          </button>
+          <p class="hint">
+            They go to <strong>Delete Review</strong>. To undo, move them back
+            in Outlook — nothing is deleted by this tool.
+          </p>
+        </div>
+
+        <!-- Progress -->
+        <div id="progress-wrap" class="progress-wrap" hidden>
+          <div class="bar"><div id="bar-fill" class="bar-fill"></div></div>
+          <span id="progress-text" class="mono progress-text"></span>
+        </div>
+      </section>
+
+      <section id="status" class="status" aria-live="polite"></section>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

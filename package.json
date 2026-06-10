@@ -1,0 +1,18 @@
+{
+  "name": "outlook-sender-cleaner",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Sweep all mail from a given sender into a Delete Review folder (personal Outlook / Microsoft accounts).",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@azure/msal-browser": "^4.29.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  }
+}
